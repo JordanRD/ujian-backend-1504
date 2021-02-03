@@ -1,7 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const bodyparser = require('body-parser')
-
+const db = require('./database')
+const {userRouter,movieRouter}=require('./routers')
 // main app
 const app = express()
 
@@ -9,10 +10,22 @@ const app = express()
 app.use(cors())
 app.use(bodyparser.json())
 
+db.connect(err => (
+    err?
+        console.log('Mysql connection failed :', err.stack) :
+        console.log('Mysql connection successful ID :',db.threadId)
+))
+
 // main route
-const response = (req, res) => res.status(200).send('<h1>REST API JCWM1504</h1>')
+const response = (_, res) => res.status(200).send('<h1>REST API JCWM1504</h1>')
 app.get('/', response)
+app.use('/user', userRouter)
+app.use('/movies',movieRouter)
+// app.use('/movies')
+
+
+
 
 // bind to local machine
-const PORT = process.env.PORT || 2000
+const PORT = 1000
 app.listen(PORT, () => `CONNECTED : port ${PORT}`)
